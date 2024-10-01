@@ -1,0 +1,18 @@
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# IDE
+.idea/
+.vscode/
+
+# Optimized
+__pycache__/
+
+# Jupyter Stuff
+ipynb_checkpoints
+
+# Logs and Data
+logs/
+# data/
