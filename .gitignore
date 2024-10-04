@@ -11,7 +11,7 @@ dmypy.json
 __pycache__/
 
 # Jupyter Stuff
-ipynb_checkpoints
+.ipynb_checkpoints/
 
 # Logs and Data
 logs/
