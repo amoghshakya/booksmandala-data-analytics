@@ -54,7 +54,7 @@ def write_to_csv(books: list[Book], filename: str, mode: str) -> None:
     headers = [
         "Title", "Author", "Price", "Rating", "Limited Stock", "Discount",
         "Genre", "Number of Pages", "Weight", "ISBN", "Language",
-        "Related Genres", "Synopsis", "URL"
+        "Related Genres", "Subgenres", "Synopsis", "URL"
     ]
 
     write_header = not os.path.exists(filename) or mode == "w"
@@ -79,6 +79,7 @@ def write_to_csv(books: list[Book], filename: str, mode: str) -> None:
                 book.isbn or "N/A",
                 book.language or "N/A",
                 ', '.join(book.related_genres),
+                ', '.join(book.sub_genres),
                 book.synopsis,
                 book.url
             ])

@@ -100,7 +100,7 @@ def scrape_book_details(book_url: str) -> Book | None:
         By.CSS_SELECTOR, ".book-content__header__title").text  # h1
     try:
         author = driver.find_element(
-            By.CSS_SELECTOR, ".book-content__header__author > a").text
+            By.CSS_SELECTOR, "div.book-content__header__author").text
     except NoSuchElementException:
         logging.warning(f"Author not found for {book_url}")
         author = "Unknown"
@@ -114,8 +114,17 @@ def scrape_book_details(book_url: str) -> Book | None:
 
     other_info = driver.find_elements(
         By.CSS_SELECTOR, ".book-content__other-info__card__wrapper")  # divs
-    related_genres = driver.find_elements(
-        By.CSS_SELECTOR, "span.genres-wrap__genres__genre__name.genres-wrap__genres__main")
+    try:
+        show_more = wait.until(EC.presence_of_element_located(
+            (By.CSS_SELECTOR, "div.genres-wrap__more")))
+        if show_more:
+            driver.execute_script("arguments[0].click()", show_more)
+
+        related_genres = driver.find_elements(
+            By.CSS_SELECTOR, "div.genres-wrap__genres__genre")
+    except (NoSuchElementException, TimeoutException):
+        related_genres = driver.find_elements(
+            By.CSS_SELECTOR, "div.genres-wrap__genres__genre")
 
     try:
         limited_stock = driver.find_element(
@@ -140,8 +149,18 @@ def scrape_book_details(book_url: str) -> Book | None:
         ).get_attribute("innerText")
         for div in other_info
     }
-    related_genres_list = [span.get_attribute(
-        "innerText") for span in related_genres]
+    related_genres_list: list[str] = []
+    sub_genres_list: list[str] = []
+    for div in related_genres:
+        genres = div.get_attribute("innerText")
+        if genres:
+            values = genres.split(
+                ":") if genres.__contains__(":") else [genres]
+            if len(values) > 1:
+                related_genres_list.append(values[0].replace("\n", ""))
+                sub_genres_list.append(values[1].replace("\n", ""))
+            else:
+                related_genres_list.append(values[0].replace("\n", ""))
 
     logging.info(
         f"Extracted {title}, {author}, \
@@ -160,6 +179,7 @@ def scrape_book_details(book_url: str) -> Book | None:
         isbn=other_info_dict.get("ISBN", "N/A"),
         language=other_info_dict.get("Language", "N/A"),
         related_genres=related_genres_list,
+        sub_genres=sub_genres_list,
         synopsis=synopsis,
         url=book_url
     )
