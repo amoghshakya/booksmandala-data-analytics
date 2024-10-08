@@ -125,7 +125,7 @@ def scrape_book_details(book_url: str) -> Book | None:
 
     try:
         discount_value = driver.find_element(
-            By.CSS_SELECTOR, ".book-aside__cart__price__discount").text
+            By.CSS_SELECTOR, "span.book-aside__cart__price__discount").get_attribute("innerText")
     except NoSuchElementException:
         discount_value = None
 
