@@ -12,7 +12,11 @@ __pycache__/
 
 # Jupyter Stuff
 .ipynb_checkpoints/
+.virtual_documents/
 
 # Logs and Data
 logs/
 # data/
+
+# dotenv
+.env
